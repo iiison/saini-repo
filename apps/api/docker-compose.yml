@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch1
+    mem_limit: 2g
+    cpus: 1.0
+    environment:
+      - node.name=node1
+      # - node.master=true
+      # - node.data=false
+      - cluster.name=my-cluster
+      - discovery.seed_hosts=elasticsearch2,elasticsearch3
+      - cluster.initial_master_nodes=node1,node2,node3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch2
+    mem_limit: 2g
+    cpus: 1.0
+    environment:
+      - node.name=node2
+      - cluster.name=my-cluster
+      - discovery.seed_hosts=elasticsearch1,elasticsearch3
+      - cluster.initial_master_nodes=node1,node2,node3
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+
+  elasticsearch3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch3
+    mem_limit: 2g
+    cpus: 1.0
+    environment:
+      - node.name=node3
+      - cluster.name=my-cluster
+      - discovery.seed_hosts=elasticsearch1,elasticsearch2
+      - cluster.initial_master_nodes=node1,node2,node3
+    volumes:
+      - esdata3:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: kibana
+    depends_on:
+      - elasticsearch1
+      - elasticsearch2
+      - elasticsearch3
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch1:9200
+
+volumes:
+  esdata1:
+  esdata2:
+  esdata3:
