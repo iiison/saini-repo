@@ -1,15 +1,15 @@
-import { connect } from 'mongoose'
+import { connect } from "mongoose";
 
 export async function connectToDB() {
   try {
-    await connect('mongodb://127.0.0.1:27017/ledger')
+    await connect("mongodb://127.0.0.1:27017/saini");
 
-    console.log('Connected To DB')
-  } catch(error: unknown) {
-    console.log('Can not connect to the DB')
+    console.log("Connected To DB");
+  } catch (error: unknown) {
+    console.log("Can not connect to the DB");
 
-    if(error instanceof Error) {
-      console.log(error.message)
+    if (error instanceof Error) {
+      console.log(error.message);
     }
   }
 }

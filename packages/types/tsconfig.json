@@ -1,17 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../typescript-config/nextjs.json",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "module": "CommonJS",
-    "strict": true,
-    "declaration": true,
-    "sourceMap": true,
-    "target": "es2022",
-    "skipLibCheck": true,
-    "noEmit": true
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,19 +1,17 @@
-import express, { Request, Response, Router } from 'express';
+import express, { Request, Response, Router } from "express";
 
-import { inventoryService } from './inventoryService';
-import { validateUpdateInventoryReq } from './validators';
-import { CustomUpdateReq, PartialInventoryItem } from './types';
+import { inventoryService } from "./inventoryService";
+import { validateUpdateInventoryReq } from "./validators";
+import { CustomUpdateReq, PartialInventoryItem } from "./types";
+import { buildInternalErrorServiceResponse } from "../../common/models/serviceResponse";
 import {
-  buildInternalErrorServiceResponse
-} from '../../common/models/serviceResponse';
-import { 
   validateRequestData,
   handleServiceResponse,
-} from '../../common/utils/httpHandlers'
-import { zInventoryItemBaseSchema } from 'types';
+} from "../../common/utils/httpHandlers";
+import { zInventoryItemBaseSchema } from "types";
 
 export const inventoryRouter: Router = (() => {
-  const router = express.Router()
+  const router = express.Router();
 
   // inventoryRegistry.registerPath({
   //   method: 'get',
@@ -22,59 +20,61 @@ export const inventoryRouter: Router = (() => {
   //   responses: createApiResponse(z.unknown(), 'test')
   // })
 
-  router.get('/find-all', async (_req: Request, res: Response) => {
-    const inventory = await inventoryService.findAll()
+  router.get("/find-all", async (_req: Request, res: Response) => {
+    const inventory = await inventoryService.findAll();
 
-    handleServiceResponse(inventory, res)
-  })
+    handleServiceResponse(inventory, res);
+  });
 
-  router.get('/:id', async (req: Request, res: Response) => {
-    const { params: { id } } = req
-    const inventory = await inventoryService.findById(id)
+  router.get("/:id", async (req: Request, res: Response) => {
+    const {
+      params: { id },
+    } = req;
+    const inventory = await inventoryService.findById(id);
 
-    handleServiceResponse(inventory, res)
-  })
+    handleServiceResponse(inventory, res);
+  });
 
   router.post(
-    '/update',
+    "/update",
     validateUpdateInventoryReq,
     async (req: CustomUpdateReq, res: Response) => {
-      const { parsedBody: body } = req
+      const { parsedBody: body } = req;
 
       if (!body) {
         handleServiceResponse(
-          buildInternalErrorServiceResponse('Something is not right'),
-          res
-        )
-        return
+          buildInternalErrorServiceResponse("Something is not right"),
+          res,
+        );
+        return;
       }
 
-      const { id, ...update }: PartialInventoryItem = body
+      const { id, ...update }: PartialInventoryItem = body;
 
-      update.lastModified = new Date()
+      update.lastModified = new Date();
 
       // TODO: Must be a better way to define type
       // there should not be check for id here & above this for body.
       if (!id) {
-        return
+        return;
       }
 
-      const updatedItem = await inventoryService.updateById(id, update)
+      const updatedItem = await inventoryService.updateById(id, update);
 
-      handleServiceResponse(updatedItem, res)
-    }
-  )
+      handleServiceResponse(updatedItem, res);
+    },
+  );
 
   router.post(
-    '/add', 
-    validateRequestData(zInventoryItemBaseSchema), 
-    async (req: Request, res: Response, ) => {
-      const { body } = req
-      const item = await inventoryService.createInventory({...body})
+    "/create",
+    validateRequestData(zInventoryItemBaseSchema),
+    async (req: Request, res: Response) => {
+      const { body } = req;
+      const item = await inventoryService.createInventory({ ...body });
 
-      handleServiceResponse(item, res)
-    }
-  )
+      handleServiceResponse(item, res);
+    },
+  );
 
-  return router
-})()
+  return router;
+})();
