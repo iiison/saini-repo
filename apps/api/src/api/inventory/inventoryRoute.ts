@@ -1,8 +1,15 @@
 import express, { Request, Response, Router } from "express";
 
 import { inventoryService } from "./inventoryService";
-import { validateUpdateInventoryReq } from "./validators";
-import { CustomUpdateReq, PartialInventoryItem } from "./types";
+import {
+  validateDeleteInventoryReq,
+  validateUpdateInventoryReq,
+} from "./validators";
+import {
+  CustomUpdateReq,
+  DeleteInventoryReq,
+  PartialInventoryItem,
+} from "./types";
 import { buildInternalErrorServiceResponse } from "../../common/models/serviceResponse";
 import {
   validateRequestData,
@@ -71,6 +78,34 @@ export const inventoryRouter: Router = (() => {
     async (req: Request, res: Response) => {
       const { body } = req;
       const item = await inventoryService.createInventory({ ...body });
+
+      handleServiceResponse(item, res);
+    },
+  );
+
+  router.post(
+    "/delete",
+    validateDeleteInventoryReq,
+    async (req: DeleteInventoryReq, res: Response) => {
+      const { parsedBody: body } = req;
+
+      if (!body) {
+        handleServiceResponse(
+          buildInternalErrorServiceResponse("Something is not right"),
+          res,
+        );
+        return;
+      }
+
+      const { id }: PartialInventoryItem = body;
+
+      // TODO: Must be a better way to define type
+      // there should not be check for id here & above this for body.
+      if (!id) {
+        return;
+      }
+
+      const item = await inventoryService.deleteById(id);
 
       handleServiceResponse(item, res);
     },
