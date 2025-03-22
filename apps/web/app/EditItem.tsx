@@ -17,11 +17,13 @@ export const EditItem = ({
     id: item?.id,
     name: item?.name,
     rate: item?.rate,
+    unit: item?.unit,
   });
 
   const inputClasses = "border rounded-lg mb-4 p-2";
   const handleInputChange =
-    (property: keyof InventoryItem) => (e: ChangeEvent<HTMLInputElement>) => {
+    (property: keyof InventoryItem) =>
+    (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setItemState((state) => {
         return {
           ...state,
@@ -80,6 +82,15 @@ export const EditItem = ({
             className={inputClasses}
             onChange={handleInputChange("rate")}
           />
+          <select
+            className={inputClasses}
+            value={itemState.unit}
+            onChange={handleInputChange("unit")}
+          >
+            <option>Select Unit</option>
+            <option value="kg">Kg</option>
+            <option value="piece">Piece</option>
+          </select>
           <button
             onClick={handleSubmitClick}
             className="bg-purple-400 p-2 rounded-lg text-white"

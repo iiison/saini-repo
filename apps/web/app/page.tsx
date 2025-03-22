@@ -38,10 +38,12 @@ export default function Home() {
     id,
     name,
     rate,
-  }: Pick<InventoryItem, "id" | "rate" | "name">) => {
+    unit,
+  }: Pick<InventoryItem, "id" | "rate" | "name" | "unit">) => {
     let url;
     const payload = {
       name,
+      unit,
       rate: Number(rate),
     };
 
